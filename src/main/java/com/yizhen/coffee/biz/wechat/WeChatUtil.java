@@ -1,6 +1,11 @@
 package com.yizhen.coffee.biz.wechat;
 
-import com.yizhen.coffee.biz.common.HttpRequest;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+import com.thoughtworks.xstream.io.xml.XmlFriendlyReplacer;
+import com.thoughtworks.xstream.io.xml.XppDriver;
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -12,13 +17,11 @@ import org.slf4j.LoggerFactory;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Random;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @Author muying.xx
@@ -27,6 +30,99 @@ import java.util.TreeMap;
 public class WeChatUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(WeChatUtil.class);
+
+
+    /**
+     * 把数组所有元素排序，并按照“参数=参数值”的模式用“&”字符拼接成字符串，排除空值
+     *
+     * @param params 需要排序并参与字符拼接的参数组
+     * @return 拼接后字符串
+     */
+    public static String createLinkString(Map<String, String> params) {
+        List<String> keys = new ArrayList<String>(params.keySet());
+        Collections.sort(keys);
+
+        String prestr = "";
+
+        for (int i = 0; i < keys.size(); i++) {
+            String key = keys.get(i);
+            String value = params.get(key);
+            if (i == keys.size() - 1) {// 拼接时，不包括最后一个&字符
+                prestr = prestr + key + "=" + value;
+            } else {
+                prestr = prestr + key + "=" + value + "&";
+            }
+        }
+        return prestr;
+    }
+
+
+    /**
+     * 生成签名结果
+     *
+     * @param sPara 要签名的字典
+     * @return 签名结果字符串
+     * @throws UnsupportedEncodingException
+     */
+    public static String buildRequestSign(Map<String, String> sPara, String key) throws UnsupportedEncodingException {
+        String prestr = createLinkString(sPara) + "&key=" + key; // 把数组所有元素，按照“参数=参数值”的模式用“&”字符拼接成字符串
+        logger.info("排序后的str = {}",prestr);
+        return DigestUtils.md5Hex(prestr.getBytes("UTF-8")).toUpperCase();
+    }
+
+    public static String buildRequestSign(WxPayData request, String key) throws Exception {
+        try {
+            Map<String, String> sPara = BeanUtils.describe(request);
+            cleanMap(sPara);
+            return buildRequestSign(sPara, key);
+        } catch (Exception e) {
+            throw e;
+        }
+    }
+
+
+    /**
+     * 清除Map里的空值，以及由 BeanUtils.describe 产生的class键
+     */
+    public static void cleanMap(Map<String, String> map) {
+        List<String> keys = new ArrayList<String>();
+        for (Map.Entry<String, String> entry : map.entrySet()) {
+            if (entry.getValue() == null || entry.getValue().equals("")) {
+                keys.add(entry.getKey());
+            }
+        }
+        for (String key : keys) {
+            map.remove(key);
+        }
+        if (map.keySet().contains("class")) {
+            map.remove("class");
+        }
+    }
+
+
+    /*
+     * xml和对象的互相转换
+     */
+    public static <T> String convertObjectToXml(Object obj, Class<T> type) {
+        XStream xstream = new XStream(new XppDriver(new XmlFriendlyReplacer("_-", "_")));
+        xstream.alias("xml", type);
+        String xml = xstream.toXML(obj);
+        return xml;
+    }
+
+    public static <T> T convertXmlToObject(Class<T> type,String xml) {
+        XStream xstream =  new XStream(new DomDriver());
+        xstream.alias("xml", type);
+        T response = (T)xstream.fromXML(xml);
+        return response;
+    }
+
+
+
+
+    /*******************************************************************************************/
+
+
 
     /**
      * 统一下单
@@ -54,16 +150,16 @@ public class WeChatUtil {
          */
         parameters.put("appid","");
         parameters.put("body", body);
-        parameters.put("mch_id", WeChatConst.MCH_ID );
+        parameters.put("mch_id", WxPayConfig.MCH_ID );
         parameters.put("nonce_str", nonce_str);
         parameters.put("out_trade_no", out_trade_no);
         parameters.put("notify_url", notify_url);
         parameters.put("spbill_create_ip", ip);
         parameters.put("total_fee",total_fee.toString() );
-        parameters.put("trade_type",WeChatConst.TRADE_TYPE );
+        parameters.put("trade_type", WxPayConfig.TRADE_TYPE );
         parameters.put("openid", openId);
 
-        String sign = WxSign.createSign(parameters, WeChatConst.KEY);
+        String sign = WxSign.createSign(parameters, WxPayConfig.KEY);
 
         /**
          * 组装XML
@@ -72,13 +168,13 @@ public class WeChatUtil {
         sb.append("<xml>");
         setXmlKV(sb,"appid","");
         setXmlKV(sb,"body",body);
-        setXmlKV(sb,"mch_id",WeChatConst.MCH_ID);
+        setXmlKV(sb,"mch_id", WxPayConfig.MCH_ID);
         setXmlKV(sb,"nonce_str",nonce_str);
         setXmlKV(sb,"notify_url",notify_url);
         setXmlKV(sb,"out_trade_no",out_trade_no);
         setXmlKV(sb,"spbill_create_ip",ip);
         setXmlKV(sb,"total_fee",total_fee.toString());
-        setXmlKV(sb,"trade_type",WeChatConst.TRADE_TYPE);
+        setXmlKV(sb,"trade_type", WxPayConfig.TRADE_TYPE);
         setXmlKV(sb,"sign",sign);
         setXmlKV(sb,"openid",openId);
         sb.append("</xml>");

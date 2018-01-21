@@ -5,7 +5,7 @@ package com.yizhen.coffee.biz.wechat;
  * @Author muying.xx
  * @Date 21/01/2018 12:41
  */
-public class WxPaySendData {
+public class WxPayData {
     //公众账号ID
     private String appid;
     //附加数据
@@ -17,7 +17,7 @@ public class WxPaySendData {
     //随机字符串
     private String nonce_str;
     //通知地址
-    private String notiry_url;
+    private String notify_url;
     //商户订单号
     private String out_trade_no;
     //标价金额
@@ -139,12 +139,12 @@ public class WxPaySendData {
         this.nonce_str = nonce_str;
     }
 
-    public String getNotiry_url() {
-        return notiry_url;
+    public String getNotify_url() {
+        return notify_url;
     }
 
-    public void setNotiry_url(String notiry_url) {
-        this.notiry_url = notiry_url;
+    public void setNotify_url(String notify_url) {
+        this.notify_url = notify_url;
     }
 
     public String getOut_trade_no() {
@@ -253,9 +253,9 @@ public class WxPaySendData {
 
     @Override
     public String toString() {
-        return "WxPaySendData [appid=" + appid + ", attach=" + attach
+        return "WxPayData [appid=" + appid + ", attach=" + attach
                 + ", body=" + body + ", mch_id=" + mch_id + ", nonce_str="
-                + nonce_str + ", notiry_url=" + notiry_url + ", out_trade_no="
+                + nonce_str + ", notify_url=" + notify_url + ", out_trade_no="
                 + out_trade_no + ", total_fee=" + total_fee + ", trade_type="
                 + trade_type + ", spbill_create_ip=" + spbill_create_ip
                 + ", openid=" + openid + ", sign=" + sign + ", prepay_id="
