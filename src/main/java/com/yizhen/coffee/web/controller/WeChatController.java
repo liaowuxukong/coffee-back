@@ -2,6 +2,7 @@ package com.yizhen.coffee.web.controller;
 
 import com.yizhen.coffee.biz.common.TimeUtil;
 import com.yizhen.coffee.biz.wechat.*;
+import com.yizhen.coffee.web.helper.CookiesHelper;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -103,13 +104,13 @@ public class WeChatController {
             log.info("接收的数据 xml:{}"+result.toString());
             WxPayData wxPayReq = WeChatUtil.convertXmlToObject(WxPayData.class,result);
             log.info("接收的数据Object:{}"+wxPayReq.toString());
+            String openid = CookiesHelper.getOpenIdFromCookies(request.getCookies());
             String appid = wxPayReq.getAppid();
             String mch_id =wxPayReq.getMch_id();
             String nonce_str = wxPayReq.getNonce_str();
             String out_trade_no = wxPayReq.getOut_trade_no();
             String total_fee = wxPayReq.getTotal_fee();
             String trade_type = wxPayReq.getTrade_type();
-            String openid =wxPayReq.getOpenid();
             String return_code = wxPayReq.getReturn_code();
             String result_code = wxPayReq.getResult_code();
             String bank_type = wxPayReq.getBank_type();

@@ -4,12 +4,11 @@ import com.google.gson.Gson;
 import com.yizhen.coffee.biz.wechat.WeChatOauth;
 import com.yizhen.coffee.biz.wechat.WeixinLoginUser;
 import com.yizhen.coffee.biz.wechat.WxPayConfig;
+import com.yizhen.coffee.web.helper.CookiesHelper;
 import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -34,7 +33,7 @@ public class IndexController {
          * 2. 获取code， 如果获取到了， 则去获取对应的openId， 再讲Openid放置于 cookies中
          * 3. 如果没有获取到code， 则跳转去获取code
          */
-        if (isCookiesHasOpenId(request.getCookies())) {
+        if (CookiesHelper.isCookiesHasOpenId(request.getCookies())) {
             return "redirect:index?shelfId="+request.getParameter("shelfId");
         }
 
@@ -57,22 +56,10 @@ public class IndexController {
          * 2. 获取code， 如果获取到了， 则去获取对应的openId， 再讲Openid放置于 cookies中
          * 3. 如果没有获取到code， 则跳转去获取code
          */
-        if (isCookiesHasOpenId(request.getCookies()) == false) {
+        if (CookiesHelper.isCookiesHasOpenId(request.getCookies()) == false) {
             return "redirect:login?shelfId="+request.getParameter("shelfId");
         }
         return "index";
-    }
-
-    private boolean isCookiesHasOpenId(Cookie[] cookies) {
-        if (cookies == null) {
-            return false;
-        }
-        for (Cookie cookie : cookies) {
-            if (cookie.getName().equals("openId")) {
-                return true;
-            }
-        }
-        return false;
     }
 
 
