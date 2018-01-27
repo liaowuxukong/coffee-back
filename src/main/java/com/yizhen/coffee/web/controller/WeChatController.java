@@ -26,7 +26,6 @@ import java.util.UUID;
  * @Date 21/01/2018 11:56
  */
 @Controller
-@RequestMapping("/wxpay")
 public class WeChatController {
     private static final Logger logger = LoggerFactory.getLogger(WeChatController.class);
 
@@ -38,7 +37,7 @@ public class WeChatController {
     @Resource
     private HttpServletResponse response;
 
-    @RequestMapping(value = "/submitWXOrderForm",method = RequestMethod.POST)
+    @RequestMapping(value = "/wxpay/submitWXOrderForm",method = RequestMethod.POST)
     @ResponseBody
     public WxPayData submitWXOrderForm(){
         System.out.println("--------------------------------预支付回调-------------------------------------------------");
@@ -167,9 +166,6 @@ public class WeChatController {
             e.printStackTrace();
         }
     }
-
-
-
 
 
 
