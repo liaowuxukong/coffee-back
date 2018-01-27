@@ -46,15 +46,16 @@ public class WeChatController {
         WxPayData result = new WxPayData();
         try {
             //商户订单号
-            String outTradeNo = request.getParameter("outTradeNo").trim(); //WxPayUtil.getOrderFormNumber();
+            String outTradeNo = "123"; //WxPayUtil.getOrderFormNumber();
             //商品价格
-            String totalFee = request.getParameter("totalFee").trim();
+            String totalFee = "1";
             //客户端ip
             String createIp = request.getRemoteAddr();
             //用户标识
             String openId = CookiesHelper.getOpenIdFromCookies(request.getCookies());
             //回调函数
-            String notifyUrl = request.getParameter("notifyUrl").trim();
+            String basePath = "http://www.ealam.cn";
+            String notifyUrl = basePath + "/wxpay/returnInfo";
 
             String nonceStr = UUID.randomUUID().toString().replace("-", "").toUpperCase();
             String timeStamp = TimeUtil.getTimeStamp();
