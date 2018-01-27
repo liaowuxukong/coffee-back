@@ -52,7 +52,7 @@ public class WeChatController {
             //客户端ip
             String createIp = request.getRemoteAddr();
             //用户标识
-            String openId = request.getParameter("openId").trim();
+            String openId = CookiesHelper.getOpenIdFromCookies(request.getCookies());
             //回调函数
             String notifyUrl = request.getParameter("notifyUrl").trim();
 
