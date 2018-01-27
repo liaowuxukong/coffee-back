@@ -26,7 +26,7 @@ public class WxPayUtil {
         request.setMch_id(WxPayConfig.MCH_ID);
         request.setNonce_str(nonceStr);
         String sign = "";
-        request.setBody("名师讲堂友看云商城");
+        request.setBody("elan");
         request.setOut_trade_no(outTradeNo);
         request.setFee_type("CNY");
         request.setTotal_fee(totalFee);
