@@ -55,7 +55,7 @@ public class WeChatController {
             String openId = CookiesHelper.getOpenIdFromCookies(request.getCookies());
             //回调函数
             String basePath = "http://www.ealam.cn";
-            String notifyUrl = basePath + "/returnInfo";
+            String notifyUrl = basePath + "/wxpay/returnInfo";
 
             String nonceStr = UUID.randomUUID().toString().replace("-", "").toUpperCase();
             String timeStamp = TimeUtil.getTimeStamp();
