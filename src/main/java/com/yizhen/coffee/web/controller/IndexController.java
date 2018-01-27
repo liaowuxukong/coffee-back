@@ -1,17 +1,20 @@
 package com.yizhen.coffee.web.controller;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.google.gson.Gson;
 import com.yizhen.coffee.biz.wechat.WeChatOauth;
 import com.yizhen.coffee.biz.wechat.WeixinLoginUser;
 import com.yizhen.coffee.biz.wechat.WxPayConfig;
 import lombok.extern.java.Log;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.net.URLEncoder;
 import java.util.Map;
@@ -24,24 +27,57 @@ import java.util.Map;
 @Log
 public class IndexController {
 
-    @Resource
-    private HttpSession httpSession;
+    @RequestMapping("/login")
+    public String login(HttpServletRequest request, HttpServletResponse response) {
+        /**
+         * 1. 获取openId， 如果获取到了，说明已经同意协议了
+         * 2. 获取code， 如果获取到了， 则去获取对应的openId， 再讲Openid放置于 cookies中
+         * 3. 如果没有获取到code， 则跳转去获取code
+         */
+        if (isCookiesHasOpenId(request.getCookies())) {
+            return "redirect:index?shelfId="+request.getParameter("shelfId");
+        }
+
+        if (request.getParameterMap().containsKey("code") && StringUtils.isNotEmpty(request.getParameter("code"))) {
+            String openId = this.getOpenId(request.getParameter("code"));
+            Cookie cookie = new Cookie("openId", openId);
+            response.addCookie(cookie);
+            return "redirect:index?shelfId="+request.getParameter("state");
+        }
+        return authorizationUrl(request.getParameter("shelfId"));
+    }
+
 
 
     @RequestMapping("/index")
-    public String index(@RequestParam("code") String code,@RequestParam("id") long id) {
+    public String index(HttpServletRequest request, HttpServletResponse response) {
 
-        if (StringUtils.isEmpty(code)) {
-            return this.authorizationUrl(id);
+        /**
+         * 1. 获取openId， 如果获取到了，说明已经同意协议了
+         * 2. 获取code， 如果获取到了， 则去获取对应的openId， 再讲Openid放置于 cookies中
+         * 3. 如果没有获取到code， 则跳转去获取code
+         */
+        if (isCookiesHasOpenId(request.getCookies()) == false) {
+            return "redirect:login?shelfId="+request.getParameter("shelfId");
         }
-
-        // 获取code之后，获取用户信息放入session中
-        String openId = this.getOpenId(code);
-        return "index?openId="+openId+"&id="+id;
+        return "index";
     }
 
-    private String  authorizationUrl(long state) {
-        String redirectUri = URLEncoder.encode("http://www.ealam.cn/index");
+    private boolean isCookiesHasOpenId(Cookie[] cookies) {
+        if (cookies == null) {
+            return false;
+        }
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals("openId")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    private String  authorizationUrl(String state) {
+        String redirectUri = URLEncoder.encode("http://www.ealam.cn/login");
         return "redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="
                 + WxPayConfig.APP_ID
                 +"&redirect_uri="+redirectUri+"&response_type=code&scope=snsapi_userinfo&state="+
@@ -62,7 +98,6 @@ public class IndexController {
         String openID = (String) map.get("openid");
         return openID;
     }
-
 
 
 
