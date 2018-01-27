@@ -169,19 +169,7 @@ public class WeChatController {
 
 
 
-    /**
-     * 授权方法
-     * @param redirecUri 重定向链接
-     *
-     * */
-    private ModelAndView authorization() {
-        String redirectUri = URLEncoder.encode("http://www.ealam.cn" + "/wxpay/toInputAccountInfo.do");
 
-        String siteURL="redirect:https://open.weixin.qq.com/connect/oauth2/authorize?appid="
-                +WxPayConfig.APP_ID
-                +"&redirect_uri="+redirectUri+"&response_type=code&scope=snsapi_userinfo&state=1234#wechat_redirect";
-        return new ModelAndView(siteURL);
-    }
 
 //    /**
 // 　　* 点击确认充值 统一下单,获得预付id(prepay_id)
@@ -272,36 +260,7 @@ public class WeChatController {
 //
 //
 //
-//    /**
-//     * 获取微信授权登陆用户
-//     * @param code
-//     * @return
-//     * @throws Exception
-//     */
-//    private WeixinLoginUser getWeixinLoginUser(String code) throws Exception {
-//        logger.debug("由code获取授权用户信息");
-//        Oauth oauth = new Oauth();
-//        // 由code获取access_token等信息
-//        String str = oauth.getToken(code, GlobalThreadLocal.getSiteConfig().getWeixin_appId(), GlobalThreadLocal.getSiteConfig().getWeixin_appSecret());
-//        // 解析返回的json数据,获取所需的信息
-//        String openID = (String) JSON.parseObject(str, Map.class).get("openid");
-//        String accessToken = (String) JSON.parseObject(str, Map.class).get("access_token");
-//        String refreshToken = (String) JSON.parseObject(str, Map.class).get("refresh_token");
-//        // 用openid,access_token获取用户的信息,返回userinfo对象
-//        UserInfo userInfo = oauth.getSnsUserInfo(openID, accessToken);
-//        // 将用户信息放入登录session中
-//        WeixinLoginUser weixinLoginUser = new WeixinLoginUser();
-//        weixinLoginUser.setOpenID(openID);
-//        weixinLoginUser.setUnionID(userInfo.getUnionid());
-//        weixinLoginUser.setHeadImageUrl(userInfo.getHeadimgurl());
-//        weixinLoginUser.setNickName(userInfo.getNickname());
-//        weixinLoginUser.setRefreshToken(refreshToken);
-//        //
-//        int siteID = GlobalThreadLocal.getSiteConfig().getSiteId();
-//        weixinLoginUser.setSiteID(siteID);
-//        // 返回weixinLoginUser对象
-//        return weixinLoginUser;
-//    }
+
 
 
 
