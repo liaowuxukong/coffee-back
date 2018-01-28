@@ -16,6 +16,7 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -104,7 +105,7 @@ public class WeChatController {
             log.info("接收的数据 xml:{}"+result.toString());
             WxPayData wxPayReq = WeChatUtil.convertXmlToObject(WxPayData.class,result);
             log.info("接收的数据Object:{}"+wxPayReq.toString());
-            String openid = CookiesHelper.getOpenIdFromCookies(request.getCookies());
+            String openid = wxPayReq.getOpenid();
             String appid = wxPayReq.getAppid();
             String mch_id =wxPayReq.getMch_id();
             String nonce_str = wxPayReq.getNonce_str();
@@ -165,7 +166,6 @@ public class WeChatController {
             e.printStackTrace();
         }
     }
-
 
 
 }
