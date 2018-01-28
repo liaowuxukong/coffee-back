@@ -45,6 +45,7 @@ public class WxPayUtil {
         String wxml = WeChatUtil.convertObjectToXml(request, WxPayData.class);
         log.info("wxml = {}",wxml);
         String resp = HttpUnit.sendPost(WxPayConfig.WXFC_API_URL, wxml);
+        log.info("resp = {}",resp);
 
         WxPayData response = WeChatUtil.convertXmlToObject(WxPayData.class, resp);
         log.info("openId = {}, 错误码 = {},错误信息 = {}",openId,response.getReturn_code(),response.getReturn_msg());
