@@ -55,7 +55,7 @@ public class WeChatController {
             //商户订单号
             String outTradeNo = UUID.randomUUID().toString().substring(0,20); //WxPayUtil.getOrderFormNumber();
             //商品价格
-            String totalFee = (String) paramMap.get("totalFee");
+            String totalFee = String.valueOf( new Double((Double) paramMap.get("totalFee")).intValue());
             log.info("totalFee = {}",totalFee);
             if (StringUtils.isEmpty(totalFee)) {
                 totalFee = "1";
