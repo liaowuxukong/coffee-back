@@ -52,34 +52,6 @@ public class WxPayUtil {
         return response;
     }
 
-//	/**
-//	* 获取服务器IP地址
-//	* @return
-//	*/
-//	public static String getServerIp(){
-//		String SERVER_IP = null;
-//		try {
-//			@SuppressWarnings("rawtypes")
-//			Enumeration netInterfaces = NetworkInterface.getNetworkInterfaces();
-//			InetAddress ip = null;
-//			while (netInterfaces.hasMoreElements()) {
-//				NetworkInterface ni = (NetworkInterface) netInterfaces.nextElement();
-//				ip = (InetAddress) ni.getInetAddresses().nextElement();
-//				SERVER_IP = ip.getHostAddress();
-//				if (!ip.isSiteLocalAddress() && !ip.isLoopbackAddress()
-//				&& ip.getHostAddress().indexOf(":") == -1) {
-//					SERVER_IP = ip.getHostAddress();
-//					break;
-//				} else {
-//					ip = null;
-//				}
-//			}
-//		} catch (SocketException e) {
-//			// TODO Auto-generated catch block
-//			e.printStackTrace();
-//		}
-//		return SERVER_IP;
-//	}
 
     /**
      * 生成微信支付订单号

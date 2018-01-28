@@ -90,7 +90,7 @@ public class WeChatController {
         return result;
     }
 
-    @RequestMapping(value = "/returnInfo",method = RequestMethod.POST)
+    @RequestMapping(value = "/wxpay/returnInfo",method = RequestMethod.POST)
     @ResponseBody
     public void returnInfo(){
 

@@ -1,5 +1,7 @@
 package com.yizhen.coffee.biz.wechat;
 
+import lombok.Data;
+
 /**
  * 微信支付参数
  * @Author muying.xx
@@ -50,6 +52,9 @@ public class WxPayData {
     private String time_end;
     //微信支付订单号
     private String transaction_id;
+
+    private String err_code;
+    private String err_code_des;
 
     public String getBank_type() {
         return bank_type;
@@ -249,6 +254,22 @@ public class WxPayData {
 
     public void setPackageStr(String packageStr) {
         this.packageStr = packageStr;
+    }
+
+    public String getErr_code() {
+        return err_code;
+    }
+
+    public void setErr_code(String err_code) {
+        this.err_code = err_code;
+    }
+
+    public String getErr_code_des() {
+        return err_code_des;
+    }
+
+    public void setErr_code_des(String err_code_des) {
+        this.err_code_des = err_code_des;
     }
 
     @Override
