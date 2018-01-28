@@ -1,5 +1,6 @@
 package com.yizhen.coffee.web.controller;
 
+import com.google.gson.Gson;
 import com.yizhen.coffee.biz.common.TimeUtil;
 import com.yizhen.coffee.biz.wechat.*;
 import com.yizhen.coffee.web.helper.CookiesHelper;
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.UUID;
@@ -42,15 +45,17 @@ public class WeChatController {
 
     @RequestMapping(value = "/wxpay/submitWXOrderForm",method = RequestMethod.POST)
     @ResponseBody
-    public WxPayData submitWXOrderForm(){
+    public WxPayData submitWXOrderForm(@RequestBody String param){
         System.out.println("--------------------------------预支付回调-------------------------------------------------");
 
         WxPayData result = new WxPayData();
         try {
+            Map<String,Object> paramMap = new Gson().fromJson(param, Map.class);
+
             //商户订单号
             String outTradeNo = UUID.randomUUID().toString().substring(0,20); //WxPayUtil.getOrderFormNumber();
             //商品价格
-            String totalFee = request.getParameter("totalFee");
+            String totalFee = (String) paramMap.get("totalFee");
             log.info("totalFee = {}",totalFee);
             if (StringUtils.isEmpty(totalFee)) {
                 totalFee = "1";
