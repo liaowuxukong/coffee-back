@@ -3,7 +3,9 @@ package com.yizhen.coffee.web.controller;
 import com.yizhen.coffee.biz.common.TimeUtil;
 import com.yizhen.coffee.biz.wechat.*;
 import com.yizhen.coffee.web.helper.CookiesHelper;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -48,7 +50,11 @@ public class WeChatController {
             //商户订单号
             String outTradeNo = UUID.randomUUID().toString().substring(0,20); //WxPayUtil.getOrderFormNumber();
             //商品价格
-            String totalFee = "1";
+            String totalFee = request.getParameter("totalFee");
+            log.info("totalFee = {}",totalFee);
+            if (StringUtils.isEmpty(totalFee)) {
+                totalFee = "1";
+            }
             //客户端ip
             String createIp = request.getRemoteAddr();
             //用户标识
