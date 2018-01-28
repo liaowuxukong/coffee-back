@@ -45,7 +45,7 @@ public class WeChatController {
         WxPayData result = new WxPayData();
         try {
             //商户订单号
-            String outTradeNo = UUID.randomUUID().toString(); //WxPayUtil.getOrderFormNumber();
+            String outTradeNo = UUID.randomUUID().toString().substring(0,20); //WxPayUtil.getOrderFormNumber();
             //商品价格
             String totalFee = "1";
             //客户端ip
