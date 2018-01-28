@@ -70,8 +70,8 @@ public class WeChatController {
 
             //两者都为SUCCESS才能获取prepay_id
             if( wxReturnData.getResult_code().equals("SUCCESS") && wxReturnData.getReturn_code().equals("SUCCESS") ){
-                //第二次签名,将微信返回的数据再进行签名
-                SortedMap<String,String> signMap = new TreeMap<String,String>();
+                //第二次签名,将微信返回的数据-主要是拿到preOrderId 再进行签名， 从前端发起调用，调用收银台
+                SortedMap<String,String> signMap = new TreeMap<>();
                 signMap.put("appId", WxPayConfig.APP_ID);
                 signMap.put("timeStamp", timeStamp);
                 signMap.put("nonceStr", nonceStr);
@@ -122,7 +122,7 @@ public class WeChatController {
             String sign = wxPayReq.getSign();
 
             //签名验证
-            SortedMap<String,String> parameters = new TreeMap<String,String>();
+            SortedMap<String,String> parameters = new TreeMap<>();
             parameters.put("appid",appid);
             parameters.put("mch_id",mch_id);
             parameters.put("nonce_str",nonce_str);
@@ -162,104 +162,9 @@ public class WeChatController {
             response.getWriter().close();
             return ;
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
-
-
-
-//    /**
-// 　　* 点击确认充值 统一下单,获得预付id(prepay_id)
-// 　　* @param request
-// 　　* @param response
-// 　　* @return
-// 　　 */
-//    @ResponseBody
-//    @RequestMapping({"pay"})
-//    public WxPayData prePay(HttpServletRequest request, HttpServletResponse response, String openId) {
-//        WxPayData result = new WxPayData();
-//        openId = des.getDesString(openId);
-//        try {
-//            //商户订单号
-//            String out_trade_no = WeChatUtil.getOut_trade_no();
-//            //产品价格,单位：分
-//            Integer total_fee = 1;
-//            //客户端ip
-//            String ip = HttpUtil.getIpAddr(request);
-//            //支付成功后回调的url地址
-//            String notify_url = "http://你的域名/odao-weixin-site/wxOfficialAccountsPay/callback.do";
-//            //统一下单
-//            String strResult = WeChatUtil.unifiedorder("testPay", out_trade_no, total_fee, ip, notify_url,openId);
-//            //解析xml
-//            XStream stream = new XStream(new DomDriver());
-//            stream.alias("xml", WxPayData.class);
-//            WxPayData wxReturnData = (WxPayData)stream.fromXML(strResult);
-//            //两者都为SUCCESS才能获取prepay_id
-//            if( wxReturnData.getResult_code().equals("SUCCESS") && wxReturnData.getReturn_code().equals("SUCCESS") ){
-//                //业务逻辑，写入订单日志(你自己的业务) .....
-//                String timeStamp = WeChatUtil.getTimeStamp();//时间戳
-//                String nonce_str = WeChatUtil.getNonceStr();//随机字符串 注：上面这两个参数，一定要拿出来作为后续的value，不能每步都创建新的时间戳跟随机字符串，不然H5调支付API，会报签名参数错误
-//                result.setResult_code(wxReturnData.getResult_code());
-//                result.setAppid("");
-//                result.setTimeStamp(timeStamp);
-//                result.setNonce_str(nonce_str);
-//                result.setPackageStr("prepay_id="+wxReturnData.getPrepay_id());
-//                result.setSignType("MD5");
-//                WeChatUtil.unifiedorder("",out_trade_no,total_fee,ip,notify_url,openId); // 下单操作中，也有签名操作，那个只针对统一下单，要区别于下面的paySign
-//                //第二次签名,将微信返回的数据再进行签名
-//                SortedMap<Object,Object> signMap = new TreeMap<Object,Object>();
-//                signMap.put("appId", "");
-//                signMap.put("timeStamp", timeStamp);
-//                signMap.put("nonceStr", nonce_str);
-//                signMap.put("package", "prepay_id="+wxReturnData.getPrepay_id());  //注：看清楚，值为：prepay_id=xxx,别直接放成了wxReturnData.getPrepay_id()
-//                signMap.put("signType", "MD5");
-//                String paySign = WxSign.createSign(signMap,  WxPayConfig.KEY);//支付签名
-//                result.setSign(paySign);
-//            }else{
-//                result.setResult_code("fail");
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return result;
-//    }
-//
-//
-
-//
-//
-//    @RequestMapping("toPay.do")
-//    public ModelAndView toPay(HttpServletRequest request, HttpServletResponse response) throws Exception {
-//
-//        ModelAndView modelAndView = new ModelAndView();
-//
-//        //重定向Url
-//        String redirecUri = URLEncoder.encode(GlobalThreadLocal.getSiteConfig().getBasePath() + "/wxOfficialAccountsPay/toInputAccountInfo.do");
-//        //用于获取成员信息的微信返回码
-//        String code = null;
-//        if( request.getParameter("code")!=null ){
-//            code =request.getParameter("code");
-//        }
-//        if( code == null) {
-//            //授权
-//            return authorization(redirecUri);
-//        }
-//        code =request.getParameter("code");
-//        // 获取用户信息
-//        WeixinLoginUser weixinLoginUser = getWeixinLoginUser(code);
-//
-//        modelAndView.addObject("openId",des.getEncString(weixinLoginUser.getOpenID()));
-//        // 跳转到支付界面
-//        String viewName = "/wxOfficialAccountsPay/pay";
-//        modelAndView.setViewName(viewName);
-//        return modelAndView;
-//    }
-//
-//
-//
-
-
 
 
 
